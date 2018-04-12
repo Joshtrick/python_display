@@ -12,17 +12,22 @@ w = QWidget()
 w.setWindowTitle("Corerain Car Detection")
 label = QLabel(w)
 
+counter = 0
 
-for i in range(0,100):
+while True:
     #Set full screen and get screen size
-    w.showFullScreen()
+    if counter == 0:
+        w.showFullScreen()
+    elif counter == 500:
+        counter = 0
+    counter = counter +1
     screenWidth = w.width()
     screenHeight = w.height()
 
     #load dummy jpeg
-    if i%2 == 0:
+    if counter%2 == 0:
         Img = cv2.imread('testing.jpg')
-    elif i%2 == 1:
+    elif counter%2 == 1:
         Img = cv2.imread('testing01.jpg')
 
     #CV mat to QImage
@@ -41,6 +46,6 @@ for i in range(0,100):
     a.processEvents()
 
     #Add a delay between frames
-    time.sleep(0.01)
+    time.sleep(0.05)
 a.exec_()
 
