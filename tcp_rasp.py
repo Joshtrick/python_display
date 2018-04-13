@@ -17,6 +17,9 @@ ser.baudrate = 115200
 ser.port = '/dev/serial0'
 ser.open()
 
+screenWidth = 1920
+screenHeight = 1080
+
 while True:
     start_check = ord(ser.read())
     if start_check == 169:
@@ -33,7 +36,11 @@ while True:
 
         if float_num > 0 and int(float_num%5) == 0 and float_num <= 500:
             face_num = int(float_num/5)
-            s.send(str(face_num))
+            data = str(face_num)
+            for i in range(0, 5-len(data)):
+                data = '0' + data
+            print "face number: %s" % face_num
+            s.send(data)
             #paint
             for i in range(0, face_num):
                 score = struct.unpack('f', ser.read(4))[0]
@@ -44,15 +51,31 @@ while True:
                         min_y = struct.unpack('f', ser.read(4))[0]
                         max_x = struct.unpack('f', ser.read(4))[0]
                         max_y = struct.unpack('f', ser.read(4))[0]
-                        #print "(%s, %s) (%s, %s)" % (min_x, min_y, max_x, max_y)
+                        print "(%s, %s) (%s, %s)" % (min_x, min_y, max_x, max_y)
+                        
                         min_x_coord = int(min_x*screenWidth)
                         min_y_coord = int(min_y*screenHeight)
                         max_x_coord = int(max_x*screenWidth)
                         max_y_coord = int(max_y*screenHeight)
-                        s.send(str(min_x_coord))
-                        s.send(str(min_y_coord))
-                        s.send(str(max_x_coord))
-                        s.send(str(max_y_coord))
+                        
+                        print "send started"
+                        data = str(min_x_coord)
+                        for i in range(0, 5-len(data)):
+                            data = '0' + data
+                        s.send(data)
+                        data = str(min_y_coord)
+                        for i in range(0, 5-len(data)):
+                            data = '0' + data
+                        s.send(data)
+                        data = str(max_x_coord)
+                        for i in range(0, 5-len(data)):
+                            data = '0' + data
+                        s.send(data)
+                        data = str(max_y_coord)
+                        for i in range(0, 5-len(data)):
+                            data = '0' + data
+                        s.send(data)
+			print "send ended"
                 else:
                     break
 

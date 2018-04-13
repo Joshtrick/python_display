@@ -24,8 +24,8 @@ print "client connected"
 
 while True:
 
-    face_num = int(s.recv(1024))
-    #print "Detected number: %s" % face_num
+    face_num = int(conn.recv(5))
+    print "Detected number: %s" % face_num
 
     #create pixmap
     image = QPixmap(screenWidth, screenHeight)
@@ -39,10 +39,11 @@ while True:
     #paint
     for i in range(0, face_num):
 
-        min_x_coord = int(s.recv(1024))
-        min_y_coord = int(s.recv(1024))
-        max_x_coord = int(s.recv(1024))
-        max_y_coord = int(s.recv(1024))
+        min_x_coord = int(conn.recv(5))
+        min_y_coord = int(conn.recv(5))
+        max_x_coord = int(conn.recv(5))
+        max_y_coord = int(conn.recv(5))
+        print "begin to draw"
         painter.drawRect(min_x_coord, min_y_coord,
                 max_x_coord - min_x_coord, max_y_coord - min_y_coord)
 
