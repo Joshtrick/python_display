@@ -1,17 +1,15 @@
 import serial
 import struct
 import sys
-import sip
-from PyQt5.Qt import *
-import numpy as np
 import time
+import socket
 
-a = QApplication(sys.argv)
-#create label
-label = QLabel()
-label.showFullScreen()
-screenWidth = 1920
-screenHeight = 1080
+#create tcp client
+HOST = '192.168.123.123'    # The remote host
+PORT = 50000              # The same port as used by the server
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((HOST, PORT))
+print "server reached"
 
 #create serial
 ser = serial.Serial()
@@ -35,20 +33,11 @@ while True:
 
         if float_num > 0 and int(float_num%5) == 0 and float_num <= 500:
             face_num = int(float_num/5)
-            #print "Detected number: %s" % face_num
-
-            #create pixmap
-            image = QPixmap(screenWidth, screenHeight)
-            image.fill(Qt.transparent)
-
-            #create painter
-            painter = QPainter()
-            painter.begin(image)
-            painter.setPen(QPen(Qt.red, 2))
-
+            s.send(str(face_num))
             #paint
             for i in range(0, face_num):
                 score = struct.unpack('f', ser.read(4))[0]
+
                 #print score
                 if int(score) == 1:
                         min_x = struct.unpack('f', ser.read(4))[0]
@@ -60,20 +49,12 @@ while True:
                         min_y_coord = int(min_y*screenHeight)
                         max_x_coord = int(max_x*screenWidth)
                         max_y_coord = int(max_y*screenHeight)
-                        painter.drawRect(min_x_coord, min_y_coord,
-                                max_x_coord - min_x_coord, max_y_coord - min_y_coord)
+                        s.send(str(min_x_coord))
+                        s.send(str(min_y_coord))
+                        s.send(str(max_x_coord))
+                        s.send(str(max_y_coord))
                 else:
                     break
 
-            painter.end()
-
-            #show rectangle
-            label.setPixmap(image)
-            label.setMask(image.mask())
-            label.show()
-            a.processEvents()
-            #time.sleep(0.01)
-
-
+s.close()
 ser.close()
-a.exec_()
