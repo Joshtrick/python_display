@@ -14,7 +14,7 @@ screenWidth = 1920
 screenHeight = 1080
 
 #create socket server
-HOST = '127.0.0.1'
+HOST = '192.168.123.123'
 PORT = 50000
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
@@ -24,7 +24,7 @@ print "client connected"
 
 while True:
 
-    face_num = int(conn.recv(5))
+    face_num = int(conn.recv(32))
     print "Detected number: %s" % face_num
 
     #create pixmap
@@ -39,10 +39,14 @@ while True:
     #paint
     for i in range(0, face_num):
 
-        min_x_coord = int((float(conn.recv(5))/1000.0)*screenWidth)
-        min_y_coord = int((float(conn.recv(5))/1000.0)*screenHeight)
-        max_x_coord = int((float(conn.recv(5))/1000.0)*screenWidth)
-        max_y_coord = int((float(conn.recv(5))/1000.0)*screenHeight)
+        #min_x_coord = int((float(conn.recv(5))/1000.0)*screenWidth)
+        #min_y_coord = int((float(conn.recv(5))/1000.0)*screenHeight)
+        #max_x_coord = int((float(conn.recv(5))/1000.0)*screenWidth)
+        #max_y_coord = int((float(conn.recv(5))/1000.0)*screenHeight)
+        min_x_coord = int(conn.recv(32))
+        min_y_coord = int(conn.recv(32))
+        max_x_coord = int(conn.recv(32))
+        max_y_coord = int(conn.recv(32))
         print "begin to draw"
         painter.drawRect(min_x_coord, min_y_coord,
                 max_x_coord - min_x_coord, max_y_coord - min_y_coord)
